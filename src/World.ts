@@ -2,53 +2,8 @@ import { existsSync } from 'fs';
 import { LevelDB } from 'leveldb-zlib';
 import { resolve } from 'path';
 import * as nbt from 'prismarine-nbt';
-
-export class LevelDBWrapper {
-  public readonly levelDB: LevelDB;
-  public readonly worldPath: string;
-  constructor(worldPath: string) {
-    if (!existsSync(resolve(process.cwd(), worldPath) + '/db')) throw Error('World not found');
-    this.worldPath = worldPath;
-    this.levelDB = new LevelDB(worldPath + '/db');
-  }
-
-  async open() {
-    await this.levelDB.open();
-  }
-
-  async close() {
-    await this.levelDB.close();
-  }
-
-  get isOpen(): boolean {
-    return this.levelDB.isOpen();
-  }
-
-  async get(key: string | Buffer): Promise<nbt.NBT | undefined> {
-    if (!key) throw Error('invalid key');
-    if (!this.isOpen) await this.open();
-
-    const rawData = await this.levelDB.get(key);
-    if (!rawData) return;
-    const { parsed } = await nbt.parse(rawData);
-    return parsed;
-  }
-
-  async getAllKeys(): Promise<string[]> {
-    const keys = [];
-    const iterator = this.levelDB.getIterator({ keyAsBuffer: false });
-    for await (const [key] of iterator) keys.push(key);
-    return keys;
-  }
-
-  async put(key: string | Buffer, value: nbt.NBT) {
-    if (!key) throw Error('invalid key');
-    if (!this.isOpen) await this.open();
-    
-    const data = nbt.writeUncompressed(value);
-    this.levelDB.put(key, data);
-  }
-}
+import { Scoreboard } from './Scoreboard'; 
+import { LevelDBWrapper } from './LevelDBWrapper';
 
 interface PlayerRawData {
   data: nbt.NBT;
@@ -56,18 +11,25 @@ interface PlayerRawData {
 }
 
 export class World {
-  public db: LevelDBWrapper;
+  public readonly db: LevelDBWrapper;
+  public readonly scoreboard: Scoreboard;
 
   constructor(worldPath: string) {
     this.db = new LevelDBWrapper(worldPath);
+    this.scoreboard = new Scoreboard();
+  }
+
+  get isOpen(): boolean {
+    return this.db.levelDB.isOpen();
   }
 
   async open() {
-    await this.db.open();
+    await this.db.levelDB.open();
+    this.scoreboard.load(await this.db.get('scoreboard'));
   }
 
   async saveAndClose() {
-    await this.db.close();
+    await this.db.levelDB.close();
   }
 /*
   async getPlayers(): Promise<Player[]> {

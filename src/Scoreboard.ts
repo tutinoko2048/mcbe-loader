@@ -1,4 +1,6 @@
-import * as nbt from 'prismarine-nbt';
+import { NBT, TagType, Tags } from 'prismarine-nbt';
+
+type Data = Record<string, Tags[TagType]>;
 
 export enum ScoreboardIdentityType {
   Player = "Player",
@@ -16,31 +18,36 @@ function toIdentityType(internalType: number): ScoreboardIdentityType {
 }
 
 export class ScoreboardObjective {
-  private scoreboard: Scoreboard;
-  private data: any;
+  private _scoreboard: Scoreboard;
+  public _data: Data;
 
-  constructor(scoreboard: Scoreboard, data: any) {
-    this.scoreboard = scoreboard;
-    this.data = data;
+  constructor(scoreboard: Scoreboard, data: Data) {
+    this._scoreboard = scoreboard;
+    this._data = data;
   }
   
   get id(): string {
-    return this.data.Name.value;
+    return this._data.Name.value as string;
   }
   
   get displayName(): string {
-    return this.data.DisplayName.value;
+    return this._data.DisplayName.value as string;
   }
   
   getScores(): ScoreboardScoreInfo[] {
-    return this.data.Scores.value.value.map(data => new ScoreboardScoreInfo(this.scoreboard, data))
+    const _scores = this._data.Scores;
+    if (_scores.type !== TagType.List) return [];
+    return _scores.value.value.map((data: any) => new ScoreboardScoreInfo(this._scoreboard, data));
   }
   
   getScore(participant: ScoreboardIdentity | string): number | undefined {
     if (participant instanceof ScoreboardIdentity) {
-      return this.getScores().find(info => info.participant.id === participant.id).score;
+      return this.getScores().find(info => info.participant.id === participant.id)?.score;
     } else if (typeof participant === 'string') {
-      return this.getScores().find(info => info.participant.type === ScoreboardIdentityType.FakePlayer && info.participant.displayName === participant).score;
+      return this.getScores().find(info =>
+        info.participant.type === ScoreboardIdentityType.FakePlayer &&
+        info.participant.displayName === participant
+      )?.score;
     }
     throw TypeError('unexpected type');
   }
@@ -51,29 +58,29 @@ export class ScoreboardObjective {
 }
 
 export class ScoreboardIdentity {
-  private scoreboard: Scoreboard;
-  private data: any;
+  private _scoreboard: Scoreboard;
+  public _data: Data;
 
-  constructor(scoreboard: Scoreboard, data: any) {
-    this.scoreboard = scoreboard;
-    this.data = data;
+  constructor(scoreboard: Scoreboard, data: Data) {
+    this._scoreboard = scoreboard;
+    this._data = data;
   }
   
   get displayName(): string {
     switch (this.type) {
-      case ScoreboardIdentityType.Player: return this.data.PlayerId.value;
-      case ScoreboardIdentityType.Entity: return this.data.EntityID.value;
-      case ScoreboardIdentityType.FakePlayer: return this.data.FakePlayerName.value;
+      case ScoreboardIdentityType.Player: return String(this._data.PlayerId.value);
+      case ScoreboardIdentityType.Entity: return String(this._data.EntityID.value);
+      case ScoreboardIdentityType.FakePlayer: return this._data.FakePlayerName.value as string;
       default: throw new TypeError(`unhandled type value: ${this.type}`);
     }
   }
   
   get id(): string {
-    return this.data.ScoreboardId.value;
+    return String(this._data.ScoreboardId.value);
   }
   
   get type(): ScoreboardIdentityType {
-    return toIdentityType(this.data.IdentityType.value);
+    return toIdentityType(this._data.IdentityType.value as number);
   }
   
   toJSON() {
@@ -82,35 +89,48 @@ export class ScoreboardIdentity {
 }
 
 export class ScoreboardScoreInfo {
-  private scoreboard: Scoreboard;
-  private data: any;
+  private _scoreboard: Scoreboard;
+  public _data: Data;
 
-  constructor(scoreboard: Scoreboard, data: any) {
-    this.scoreboard = scoreboard;
-    this.data = data;
+  constructor(scoreboard: Scoreboard, data: Data) {
+    this._scoreboard = scoreboard;
+    this._data = data;
   }
   
   get score(): number {
-    return this.data.Score.value;
+    return this._data.Score.value as number;
   }
   
-  get participant(): ScoreboardIdentity {
-    return this.scoreboard.getParticipants().find(identity => identity.id === this.data.ScoreboardId.value);
+  get participant(): ScoreboardIdentity | undefined {
+    return this._scoreboard.getParticipants().find(identity =>
+      identity.id === this.id
+    );
+  }
+
+  get id(): string {
+    return String(this._data.ScoreboardId.value);
   }
   
   toJSON() {
-    return { score: this.score, participant: this.participant }
+    return { score: this.score, participant: this.participant.toJSON(), id: this.id }
   }
 }
+
 export class Scoreboard {
-  data: nbt.NBT;
+  public _data: NBT;
+  public loaded: boolean = false;
   
-  constructor(data: any) {
-    this.data = data;
+  constructor() {}
+
+  async load(data: NBT) {
+    this._data = data;
+    this.loaded = true;
   }
   
   getObjectives(): ScoreboardObjective[] {
-    return this.data.value.Objectives.value.value.map(data => new ScoreboardObjective(this, data))
+    const _objectives = this._data.value.Objectives;
+    if (_objectives.type !== TagType.List || _objectives.value.type !== TagType.Compound) return [];
+    return _objectives.value.value.map((data: any) => new ScoreboardObjective(this, data));
   }
   
   getObjective(objectiveId: string): ScoreboardObjective | undefined {
@@ -118,8 +138,7 @@ export class Scoreboard {
   }
   
   getParticipants(): ScoreboardIdentity[] {
-    const entries = this.data.value.Entries;
-    entries.value
-    return this.data.value.Entries.value.value.map(data => new ScoreboardIdentity(this, data));
+    if (this._data?.value.Entries.type !== TagType.List) return [];
+    return this._data.value.Entries.value.value.map((data: any) => new ScoreboardIdentity(this, data));
   }
 }
