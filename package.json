@@ -1,0 +1,17 @@
+{
+  "name": "mcbe-util",
+  "scripts": {
+    "main": "ts-node main.ts",
+    "watch": "nodemon"
+  },
+  "dependencies": {
+    "@types/node": "^20.8.10",
+    "leveldb-zlib": "^1.2.0",
+    "prismarine-nbt": "^2.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
