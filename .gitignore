@@ -1,4 +1,4 @@
 node_modules
 package-lock.json
-worlds
-!worlds/README.md
+/worlds/*
+!/worlds/README.md
