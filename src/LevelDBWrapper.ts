@@ -38,4 +38,8 @@ export class LevelDBWrapper {
     const rawData = nbt.writeUncompressed(value);
     return await this.levelDB.put(key, rawData);
   }
+  
+  async has(key: string | Buffer): Promise<boolean> {
+    return !!await this.get(key);
+  }
 }

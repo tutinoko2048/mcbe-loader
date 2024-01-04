@@ -1,6 +1,5 @@
-import { NBT, TagType, Tags } from 'prismarine-nbt';
-
-type Data = Record<string, Tags[TagType]>;
+import { NBT, TagType } from 'prismarine-nbt';
+import { Data } from './types';
 
 export enum ScoreboardIdentityType {
   Player = "Player",
@@ -75,8 +74,9 @@ export class ScoreboardIdentity {
     }
   }
   
-  get id(): string {
-    return String(this._data.ScoreboardId.value);
+  get id(): BigInt {
+    if (this._data.ScoreboardId.type !== TagType.Long) return;
+    return this._data.ScoreboardId.value as unknown as BigInt;
   }
   
   get type(): ScoreboardIdentityType {
@@ -107,8 +107,9 @@ export class ScoreboardScoreInfo {
     );
   }
 
-  get id(): string {
-    return String(this._data.ScoreboardId.value);
+  get id(): BigInt {
+    if (this._data.ScoreboardId.type !== TagType.Long) return;
+    return this._data.ScoreboardId.value as unknown as BigInt;
   }
   
   toJSON() {

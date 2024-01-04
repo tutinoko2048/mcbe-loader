@@ -1,3 +1,5 @@
+import { TagType, Tags } from 'prismarine-nbt';
+
 export interface Vector3 {
   x: number;
   y: number;
@@ -13,3 +15,5 @@ export interface Enchantment {
   id: number;
   level: number;
 }
+
+export type Data = Record<string, Tags[TagType]>;

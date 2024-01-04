@@ -1,17 +1,20 @@
-const { ItemStack } = require('./ItemStack');
+import { TagType, Tags } from 'prismarine-nbt';
 
-exports.Inventory = class Inventory {
-  #data;
-  constructor(data) {
-    this.#data = data;
+type Data = Tags[TagType.List]
+
+export class Inventory {
+  public _data: Data;
+  public slots: any[];
+
+  constructor(data: Data) {
+    this._data = data;
+
+    this.slots = this._data.value.value.map(item => item);
   }
-  
-  /** 
-   * @param {number} slot
-   * @returns {ItemStack | undefined}
-   */
+
+  /*
   getItem(slot) {
-    let itemData = this.#data[slot];
+    let itemData = this._data[slot];
     if (itemData && itemData.Slot.value !== slot) itemData = this.#data.find(x => x.Slot.value === slot);
     if (
       itemData &&
@@ -20,8 +23,8 @@ exports.Inventory = class Inventory {
     ) return new ItemStack(itemData);
   }
   
-  /** @type {number} */
   get size() {
     return this.#data.length;
   }
+  */
 }

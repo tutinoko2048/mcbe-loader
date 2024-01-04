@@ -1,9 +1,8 @@
 import { existsSync } from 'fs';
-import { LevelDB } from 'leveldb-zlib';
-import { resolve } from 'path';
 import * as nbt from 'prismarine-nbt';
 import { Scoreboard } from './Scoreboard'; 
 import { LevelDBWrapper } from './LevelDBWrapper';
+import { Player } from './Player';
 
 interface PlayerRawData {
   data: nbt.NBT;
@@ -31,26 +30,14 @@ export class World {
   async saveAndClose() {
     await this.db.levelDB.close();
   }
-/*
+
   async getPlayers(): Promise<Player[]> {
     const keys = await this.db.getAllKeys();
-    const playerInfoKeys = keys.filter(k => k.startsWith('player') && !k.includes('server'));
-
-    const getPlayerData = async (key: string) => {
-      return (await this.db.get(key))?.value;
-    }
-
-
-    const promises: Promise<PlayerRawData>[] = playerInfoKeys.map(async infoKey => {
-      const info = await this.db.get(infoKey);
-      if (!info) return;
-      return {
-        data: 
-        info: info.value
-      };
-    });
-      
-    const playersData = (await Promise.all(promises));
+    const playerKeys = keys.filter(k => k.startsWith('player') && k.includes('server'));
+    playerKeys.push('~local_player');
+    
+    return await Promise.all(
+      playerKeys.map(async key => new Player(await this.db.get(key)))
+    )
   }
-  */
 }
