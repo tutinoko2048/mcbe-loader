@@ -1,21 +1,17 @@
-import { existsSync } from 'fs';
-import * as nbt from 'prismarine-nbt';
 import { Scoreboard } from './Scoreboard'; 
 import { LevelDBWrapper } from './LevelDBWrapper';
 import { Player } from './Player';
-
-interface PlayerRawData {
-  data: nbt.NBT;
-  info: nbt.NBT;
-}
+import { DynamicPropertiesCollection, DynamicPropertyUtil } from './DynamicProperty';
 
 export class World {
   public readonly db: LevelDBWrapper;
   public readonly scoreboard: Scoreboard;
+  public readonly dynamicProperties: DynamicPropertiesCollection;
 
   constructor(worldPath: string) {
     this.db = new LevelDBWrapper(worldPath);
     this.scoreboard = new Scoreboard();
+    this.dynamicProperties = {}
   }
 
   get isOpen(): boolean {
@@ -25,6 +21,7 @@ export class World {
   async open() {
     await this.db.levelDB.open();
     this.scoreboard.load(await this.db.get('scoreboard'));
+    Object.assign(this.dynamicProperties, DynamicPropertyUtil.load(await this.db.get('DynamicProperties')));
   }
 
   async saveAndClose() {
