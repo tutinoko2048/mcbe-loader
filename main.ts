@@ -1,15 +1,19 @@
-import { writeFileSync } from 'fs';
-import { World } from './src';
+import { World, EquipmentSlot } from './src';
 
-const world = new World('./worlds/map');
+const world = new World('./worlds/seichi');
 
 async function main() {
   await world.open();
-  
   const players = await world.getPlayers();
+  console.log(world.dynamicProperties)
+  for (const player of players) {
+    const x = player.equipmentInventory.getItem(EquipmentSlot.Legs)
+    if (x) {
+      console.log(x.toJSON())
+      break;
+    } 
+  }
 
-  console.log(players.map(p => p.inventory.slots)[0])
-  //const output = await world.db.get('DynamicProperties');
-  //writeFileSync('output/player.json', JSON.stringify(x[0], null, 2));
+  //writeFileSync('output/users.json', JSON.stringify(objectives, null, 2));
 }
 main().catch(console.error);

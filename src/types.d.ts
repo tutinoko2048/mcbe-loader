@@ -1,4 +1,3 @@
-import { TagType, Tags } from 'prismarine-nbt';
 
 export interface Vector3 {
   x: number;
