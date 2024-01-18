@@ -15,5 +15,3 @@ export interface Enchantment {
   id: number;
   level: number;
 }
-
-export type Data = Record<string, Tags[TagType]>;
