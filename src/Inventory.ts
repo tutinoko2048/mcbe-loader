@@ -1,6 +1,7 @@
 import { TagType, Tags } from 'prismarine-nbt';
 import { InventorySlot } from './InventorySlot';
 import { ItemStack } from './ItemStack';
+import { Player } from './Player';
 
 type Data = Tags[TagType.List];
 
@@ -8,8 +9,8 @@ export class Inventory {
   public _data: Data;
   public slots: InventorySlot[];
 
-  constructor(data: Data) {
-    this._data = data;
+  constructor(player: Player) {
+    this._data = player._data.value.Inventory as any;
     this.slots = this._data.value.value.map((slot: any) => new InventorySlot(slot));
   }
 

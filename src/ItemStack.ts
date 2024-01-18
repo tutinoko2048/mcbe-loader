@@ -1,5 +1,5 @@
 import { Tags, TagType } from 'prismarine-nbt';
-import { Enchantment } from '.';
+import { Enchantment } from './types';
 
 type Data = Record<string, Tags[TagType]>;
 

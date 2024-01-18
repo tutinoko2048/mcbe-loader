@@ -1,29 +1,17 @@
-import { NBT, TagType } from 'prismarine-nbt';
+import { NBT } from 'prismarine-nbt';
 import { Entity } from './Entity';
 import { Inventory } from './Inventory';
+import { EquipmentInventory } from './EquipmentInventory';
 
 export class Player extends Entity {
   public readonly inventory: Inventory;
-  /*
-  #info;
-  #inventory;
-  #enderChestInventory;
-  #equipmentInventory;
-*/
+  public readonly equipmentInventory: EquipmentInventory;
+
   constructor(data: NBT) {
     super(data);
 
-    const inventory = this._data.value.Inventory;
-    if (inventory?.type !== TagType.List || inventory.value.type !== TagType.Compound) return;
-    this.inventory = new Inventory(inventory);
-    /*
-    this.#enderChestInventory = new Inventory(this.#data.EnderChestInventory.value.value);
-    this.#equipmentInventory = new EquipmentInventory(
-      this.#data.Armor.value.value,
-      this.#data.Mainhand.value.value,
-      this.#data.Offhand.value.value
-    );
-    */
+    this.inventory = new Inventory(this);
+    this.equipmentInventory = new EquipmentInventory(this);
   }
 
   /*  
@@ -46,18 +34,12 @@ export class Player extends Entity {
   
   get playerPermissionLevel() {
     return this._data.abilities.value.playerPermissionsLevel.value;
-  }
-  
-  get inventory() {
-    return this.#inventory;
-  }
-  
+  }  
     
   get level() {
     return this._data.PlayerLevel.value;
   }
 
-  
   toJSON() {
     const valueList = [
       'id',
@@ -74,5 +56,3 @@ export class Player extends Entity {
   }
   **/
 }
-
-module.exports = { Player }
