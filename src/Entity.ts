@@ -1,10 +1,14 @@
 import { NBT, TagType } from 'prismarine-nbt';
+import { DynamicPropertiesCollection, DynamicPropertyUtil } from './DynamicProperty';
 import type { Vector3, Vector2 } from './types';
+
 export class Entity {
-  public _data: NBT;
+  public readonly _data: NBT;
+  public readonly dynamicProperties: DynamicPropertiesCollection;
 
   constructor(data: NBT) {
     this._data = data;
+    this.dynamicProperties = DynamicPropertyUtil.load(this._data.value.DynamicProperties as any);
   }
 
   isValid(): boolean {

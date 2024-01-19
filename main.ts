@@ -1,17 +1,15 @@
+
 import { World, EquipmentSlot } from './src';
 
-const world = new World('./worlds/seichi');
+const world = new World('./worlds/sky');
 
 async function main() {
   await world.open();
-  const players = await world.getPlayers();
   console.log(world.dynamicProperties)
+
+  const players = await world.getPlayers()
   for (const player of players) {
-    const x = player.equipmentInventory.getItem(EquipmentSlot.Legs)
-    if (x) {
-      console.log(x.toJSON())
-      break;
-    } 
+    if (Object.keys(player.dynamicProperties).length > 0) console.log(player.dynamicProperties);
   }
 
   //writeFileSync('output/users.json', JSON.stringify(objectives, null, 2));
