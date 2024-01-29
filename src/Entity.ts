@@ -20,6 +20,10 @@ export class Entity {
     return this._data.value.UniqueID.value as unknown as BigInt;
   }
 
+  get typeId(): string {
+    return this._data.value.identifier.value as unknown as string;
+  }
+
   get tags(): string[] {
     const tags = this._data.value.Tags;
     if (tags?.type !== TagType.List) return [];
@@ -38,5 +42,11 @@ export class Entity {
     if (rotation?.type !== TagType.List) return;
     const [x, y] = rotation.value.value as number[];
     return { x, y }
+  }
+
+  get health(): number | undefined {
+    const health = this._data.value.Health;
+    if (!health) return;
+    return health.value as unknown as number;
   }
 }
