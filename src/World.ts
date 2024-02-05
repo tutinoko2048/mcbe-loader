@@ -1,6 +1,7 @@
 import { Scoreboard } from './Scoreboard'; 
 import { LevelDBWrapper } from './LevelDBWrapper';
 import { Player } from './Player';
+import { Entity } from './Entity';
 import { DynamicPropertiesCollection, DynamicPropertyUtil } from './DynamicProperty';
 
 export class World {
@@ -11,7 +12,7 @@ export class World {
   constructor(worldPath: string) {
     this.db = new LevelDBWrapper(worldPath);
     this.scoreboard = new Scoreboard();
-    this.dynamicProperties = {}
+    this.dynamicProperties = {};
   }
 
   get isOpen(): boolean {
@@ -36,5 +37,16 @@ export class World {
     return await Promise.all(
       playerKeys.map(async key => new Player(await this.db.get(key)))
     )
+  }
+
+  async getEntities(): Promise<Entity[]> {
+    const keys = await this.db.getAllKeys();
+    const entityKeys = keys.filter(k => k.startsWith('actorprefix'));
+    return (await Promise.all(
+      entityKeys.map(async key => {
+        const data = await this.db.get(key);
+        return data && new Entity(data);
+      })
+    )).filter(Boolean);
   }
 }
