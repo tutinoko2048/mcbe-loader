@@ -17,7 +17,7 @@ export class ChunkManager {
       const cz = key.readInt32LE(4);
 
       let dim = 0;
-      const hasDimensionParam = key.byteLength === 13 || key.byteLength === 14;
+      const hasDimensionParam = (key.byteLength > 18 || key.byteLength === 13 || key.byteLength === 14);
       if (hasDimensionParam) dim = key.readInt32LE(8);
 
       const tag = key[hasDimensionParam ? 12 : 8];
