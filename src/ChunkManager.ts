@@ -8,7 +8,7 @@ export class ChunkManager {
   ) {}
   
   async load() {
-    const keys = await this.world.db.getAllKeysRaw();
+    const keys = await this.world.db.getEntries();
     for (const levelKey of keys) {
       const { buffer, byteLength, key } = levelKey;
       if (key.startsWith('digp') || byteLength < 8) continue;

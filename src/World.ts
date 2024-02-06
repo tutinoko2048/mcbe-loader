@@ -33,7 +33,7 @@ export class World {
   }
 
   async getPlayers(): Promise<Player[]> {
-    const keys = await this.db.getAllKeys();
+    const keys = await this.db.getKeys();
     const playerKeys = keys.filter(k => k.startsWith('player') && k.includes('server'));
     playerKeys.push('~local_player');
     
@@ -43,7 +43,7 @@ export class World {
   }
 
   async getEntities(): Promise<Entity[]> {
-    const keys = await this.db.getAllKeys();
+    const keys = await this.db.getKeys();
     const entityKeys = keys.filter(k => k.startsWith('actorprefix'));
     return (await Promise.all(
       entityKeys.map(async key => {

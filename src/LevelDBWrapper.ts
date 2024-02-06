@@ -24,17 +24,17 @@ export class LevelDBWrapper {
     return parsed;
   }
 
-  async getAllKeys(keyAsBuffer?: false): Promise<string[]>;
-  async getAllKeys(keyAsBuffer: true): Promise<Buffer[]>;
-  async getAllKeys(keyAsBuffer: boolean = false): Promise<string[] | Buffer[]> {
+  async getKeys(asBuffer?: false): Promise<string[]>;
+  async getKeys(asBuffer: true): Promise<Buffer[]>;
+  async getKeys(asBuffer: boolean = false): Promise<string[] | Buffer[]> {
     if (!this.levelDB.isOpen()) await this.levelDB.open();
     const keys = [];
-    const iterator = this.levelDB.getIterator({ keyAsBuffer });
+    const iterator = this.levelDB.getIterator({ keyAsBuffer: asBuffer, keys: true, values: false });
     for await (const [key] of iterator) keys.push(key);
     return keys;
   }
 
-  async getAllKeysRaw(): Promise<LevelKey[]> {
+  async getEntries(): Promise<LevelKey[]> {
     if (!this.levelDB.isOpen()) await this.levelDB.open();
     const keys: LevelKey[] = [];
     const iterator = this.levelDB.getIterator({ keyAsBuffer: true });
