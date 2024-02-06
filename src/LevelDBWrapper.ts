@@ -8,7 +8,7 @@ import { LevelKey } from './LevelKey';
 // https://learn.microsoft.com/en-us/minecraft/creator/documents/actorstorage
 // minecraft-creator-tools/WorldChunk/addKeyValue
 // https://github.com/Mojang/minecraft-creator-tools/blob/main/app/src/minecraft/WorldChunk.ts#L138
-export enum LevelChunkTag {
+export enum WorldChunkTag {
   Data3D = 43,
   Version, // This was moved to the front as needed for the extended heights feature. Old chunks will not have this data.
   Data2D = 45,

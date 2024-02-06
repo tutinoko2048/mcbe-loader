@@ -3,16 +3,18 @@ import { LevelDBWrapper } from './LevelDBWrapper';
 import { Player } from './Player';
 import { Entity } from './Entity';
 import { DynamicPropertiesCollection, DynamicPropertyUtil } from './DynamicProperty';
+import { WorldChunk } from './WorldChunk';
+import { ChunkManager } from './ChunkManager';
 
 export class World {
   public readonly db: LevelDBWrapper;
-  public readonly scoreboard: Scoreboard;
-  public readonly dynamicProperties: DynamicPropertiesCollection;
+  public readonly scoreboard: Scoreboard = new Scoreboard();
+  public readonly dynamicProperties: DynamicPropertiesCollection = {};
+  public readonly chunkManager: ChunkManager;
 
   constructor(worldPath: string) {
     this.db = new LevelDBWrapper(worldPath);
-    this.scoreboard = new Scoreboard();
-    this.dynamicProperties = {};
+    this.chunkManager = new ChunkManager(this);
   }
 
   get isOpen(): boolean {
@@ -23,6 +25,7 @@ export class World {
     await this.db.levelDB.open();
     this.scoreboard.load(await this.db.get('scoreboard'));
     Object.assign(this.dynamicProperties, DynamicPropertyUtil.load(await this.db.get('DynamicProperties')));
+    await this.chunkManager.load();
   }
 
   async saveAndClose() {
@@ -48,5 +51,17 @@ export class World {
         return data && new Entity(data);
       })
     )).filter(Boolean);
+  }
+
+  async getChunks(): Promise<WorldChunk[]> {
+    const chunks = [];
+    for (const dimensionChunks of Object.values(this.chunkManager.chunks)) {
+      for (const xChunks of Object.values(dimensionChunks)) {
+        for (const chunk of Object.values(xChunks)) {
+          chunks.push(chunk);
+        }
+      }
+    }
+    return chunks;
   }
 }
