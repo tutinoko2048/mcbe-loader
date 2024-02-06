@@ -1,4 +1,4 @@
-import type { LevelKey } from './LevelKey';
+import type { LevelKeyValue } from './LevelKeyValue';
 
 // Microsoft Creator Docs
 // https://learn.microsoft.com/en-us/minecraft/creator/documents/actorstorage
@@ -43,7 +43,7 @@ export class WorldChunk {
     public z: number
   ) {}
 
-  addKey(levelKey: LevelKey, info: ChunkKeyInfo) {
+  addKey(levelKey: LevelKeyValue, info: ChunkKeyInfo) {
     const { hasDimensionParam, tag } = info;
   }
 }

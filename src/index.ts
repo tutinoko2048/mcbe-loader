@@ -1,5 +1,5 @@
 export * from './LevelDBWrapper';
-export * from './LevelKey';
+export * from './LevelKeyValue';
 export * from './World';
 export * from './Scoreboard';
 export * from './Entity';

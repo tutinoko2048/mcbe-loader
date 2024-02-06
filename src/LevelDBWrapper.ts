@@ -2,7 +2,7 @@ import { existsSync } from 'fs';
 import { LevelDB } from 'leveldb-zlib';
 import { resolve } from 'path';
 import * as nbt from 'prismarine-nbt'; 
-import { LevelKey } from './LevelKey';
+import { LevelKeyValue } from './LevelKeyValue';
 
 export class LevelDBWrapper {
   public readonly levelDB: LevelDB;
@@ -34,11 +34,11 @@ export class LevelDBWrapper {
     return keys;
   }
 
-  async getEntries(): Promise<LevelKey[]> {
+  async getEntries(): Promise<LevelKeyValue[]> {
     if (!this.levelDB.isOpen()) await this.levelDB.open();
-    const keys: LevelKey[] = [];
+    const keys: LevelKeyValue[] = [];
     const iterator = this.levelDB.getIterator({ keyAsBuffer: true });
-    for await (const [key] of iterator) keys.push(new LevelKey(key));
+    for await (const [key, value] of iterator) keys.push(new LevelKeyValue(key, value));
     return keys;
   }
 
