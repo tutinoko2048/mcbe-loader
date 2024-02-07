@@ -38,9 +38,9 @@ interface ChunkKeyInfo {
 
 export class WorldChunk {
   constructor(
-    public dimension: number,
-    public x: number,
-    public z: number
+    public readonly dimension: number,
+    public readonly x: number,
+    public readonly z: number
   ) {}
 
   addKeyValue(keyValue: LevelKeyValue, info: ChunkKeyInfo) {

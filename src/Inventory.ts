@@ -6,8 +6,8 @@ import { Player } from './Player';
 type Data = Tags[TagType.List];
 
 export class Inventory {
-  public _data: Data;
-  public slots: InventorySlot[];
+  public readonly _data: Data;
+  public readonly slots: InventorySlot[];
 
   constructor(player: Player) {
     this._data = player._data.value.Inventory as any;

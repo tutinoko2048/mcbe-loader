@@ -2,9 +2,9 @@ import type { World } from './World';
 import { WorldChunk } from './WorldChunk';
 
 export class ChunkManager {
-  public chunks: { [dim: number]: { [cx: number]: { [cz: number]: WorldChunk } } } = {};
+  public readonly chunks: { [dim: number]: { [cx: number]: { [cz: number]: WorldChunk } } } = {};
   constructor(
-    public world: World,
+    public readonly world: World,
   ) {}
   
   async load() {

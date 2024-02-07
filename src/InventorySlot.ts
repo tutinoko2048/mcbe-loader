@@ -4,7 +4,7 @@ import { ItemStack } from './ItemStack';
 type Data = Record<string, Tags[TagType.Compound]>;
 
 export class InventorySlot {
-  public _data: Data;
+  public readonly _data: Data;
   constructor(data: Data) {
     this._data = data;
   }

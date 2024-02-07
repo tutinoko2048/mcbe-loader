@@ -10,7 +10,7 @@ export enum ItemLockMode {
 }
 
 export class ItemStack {
-  public _data: Data;
+  public readonly _data: Data;
   constructor(data: Data) {
     this._data = data;
   }

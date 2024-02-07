@@ -18,8 +18,8 @@ function toIdentityType(internalType: number): ScoreboardIdentityType {
 }
 
 export class ScoreboardObjective {
-  private _scoreboard: Scoreboard;
-  public _data: Data;
+  private readonly _scoreboard: Scoreboard;
+  public readonly _data: Data;
 
   constructor(scoreboard: Scoreboard, data: Data) {
     this._scoreboard = scoreboard;
@@ -58,8 +58,8 @@ export class ScoreboardObjective {
 }
 
 export class ScoreboardIdentity {
-  private _scoreboard: Scoreboard;
-  public _data: Data;
+  private readonly _scoreboard: Scoreboard;
+  public readonly _data: Data;
 
   constructor(scoreboard: Scoreboard, data: Data) {
     this._scoreboard = scoreboard;
@@ -90,8 +90,8 @@ export class ScoreboardIdentity {
 }
 
 export class ScoreboardScoreInfo {
-  private _scoreboard: Scoreboard;
-  public _data: Data;
+  private readonly _scoreboard: Scoreboard;
+  public readonly _data: Data;
 
   constructor(scoreboard: Scoreboard, data: Data) {
     this._scoreboard = scoreboard;

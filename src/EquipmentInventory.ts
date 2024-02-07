@@ -1,5 +1,4 @@
-import { off } from 'process';
-import { Player } from '.';
+import { Player } from './Player';
 import { InventorySlot } from './InventorySlot';
 import { ItemStack } from './ItemStack';
 
@@ -13,9 +12,9 @@ export enum EquipmentSlot {
 }
 
 export class EquipmentInventory {
-  private armorSlots: InventorySlot[];
-  private mainHand: InventorySlot;
-  private offHand: InventorySlot;
+  private readonly armorSlots: InventorySlot[];
+  private readonly mainHand: InventorySlot;
+  private readonly offHand: InventorySlot;
 
   constructor(player: Player) {
     const armors = player._data.value?.['Armor'] as any;
