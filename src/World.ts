@@ -39,7 +39,7 @@ export class World {
     
     return await Promise.all(
       playerKeys.map(async key => new Player(await this.db.get(key)))
-    )
+    );
   }
 
   async getEntities(): Promise<Entity[]> {

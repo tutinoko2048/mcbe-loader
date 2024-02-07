@@ -9,8 +9,8 @@ export class ChunkManager {
   
   async load() {
     const keys = await this.world.db.getEntries();
-    for (const levelKey of keys) {
-      const { key, skey } = levelKey;
+    for (const keyValue of keys) {
+      const { key, skey } = keyValue;
       if (skey.startsWith('digp') || key.byteLength < 8) continue;
 
       const cx = key.readInt32LE(0);
@@ -30,7 +30,7 @@ export class ChunkManager {
         this.chunks[dim][cx][cz] = chunk;
       }
 
-      chunk.addKey(levelKey, { tag, hasDimensionParam });
+      chunk.addKeyValue(keyValue, { tag, hasDimensionParam });
     }
   }
 }

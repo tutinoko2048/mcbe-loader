@@ -43,7 +43,7 @@ export class WorldChunk {
     public z: number
   ) {}
 
-  addKey(levelKey: LevelKeyValue, info: ChunkKeyInfo) {
+  addKeyValue(keyValue: LevelKeyValue, info: ChunkKeyInfo) {
     const { hasDimensionParam, tag } = info;
   }
 }

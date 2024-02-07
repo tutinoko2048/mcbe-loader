@@ -1,7 +1,8 @@
-export class LevelKeyValue {
+import { NBT, parse } from 'prismarine-nbt';
+
+export class LevelKey {
   constructor(
-    public key: Buffer,
-    public value: Buffer
+    public readonly key: Buffer
   ) {}
 
   get skey(): string {
@@ -10,5 +11,20 @@ export class LevelKeyValue {
 
   get hexKey(): string {
     return this.key.toString('hex');
+  }
+}
+
+export class LevelKeyValue extends LevelKey {
+  constructor(
+    key: Buffer,
+    public readonly value?: Buffer
+  ) {
+    super(key);
+  }
+
+  async toNBT(): Promise<NBT | undefined> {
+    if (!this.value) return;
+    const { parsed } = await parse(this.value);
+    return parsed;
   }
 }
