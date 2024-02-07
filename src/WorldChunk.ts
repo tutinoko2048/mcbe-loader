@@ -1,4 +1,5 @@
-import type { LevelKeyValue } from './LevelKeyValue';
+import { LevelKeyValue } from './LevelKeyValue';
+import { BlockEntity } from './BlockEntity';
 
 // Microsoft Creator Docs
 // https://learn.microsoft.com/en-us/minecraft/creator/documents/actorstorage
@@ -37,13 +38,47 @@ interface ChunkKeyInfo {
 }
 
 export class WorldChunk {
+  public readonly subChunks: LevelKeyValue[] = new Array(64);
+  public readonly subChunkVersions: number[] = new Array(64);
+  public chunkVersion: LevelKeyValue | undefined;
+  public blockEntityKeys: LevelKeyValue[] = [];
+
   constructor(
     public readonly dimension: number,
     public readonly x: number,
     public readonly z: number
   ) {}
 
+  async getBlockEntities() {
+    return Promise.all(
+      this.blockEntityKeys.map(async (keyValue) => {
+        return new BlockEntity(await keyValue.toNBT())
+      })
+    );
+  }
+
   addKeyValue(keyValue: LevelKeyValue, info: ChunkKeyInfo) {
     const { hasDimensionParam, tag } = info;
+    if (this.x > 1000) console.log(keyValue.skey)
+    switch (tag) {
+      case WorldChunkTag.Version:
+        this.chunkVersion = keyValue;
+        break;
+
+      case WorldChunkTag.SubChunkPrefix:
+        const subChunkIndex = keyValue.key.readInt8(hasDimensionParam ? 9 + 4 : 9);
+        if (subChunkIndex < 0) return;
+        this.subChunks[subChunkIndex] ??= keyValue;
+        this.subChunkVersions[subChunkIndex] ??= keyValue.value[0];
+        break;
+
+      case WorldChunkTag.BlockEntity:
+        this.blockEntityKeys.push(keyValue);
+        break;
+    }
+  }
+
+  get [Symbol.toStringTag]() {
+    return `${this.x}, ${this.z}`;
   }
 }
