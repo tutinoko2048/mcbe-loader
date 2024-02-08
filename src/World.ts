@@ -5,16 +5,39 @@ import { Entity } from './Entity';
 import { DynamicPropertiesCollection, DynamicPropertyUtil } from './DynamicProperty';
 import { WorldChunk } from './WorldChunk';
 import { ChunkManager } from './ChunkManager';
+import { processWorldData } from '.';
+
+export interface WorldLoadOptions {
+  scoreboard?: boolean;
+  dynamicProperty?: boolean;
+  chunk?: boolean;
+  entity?: boolean;
+  player?: boolean;
+}
 
 export class World {
   public readonly db: LevelDBWrapper;
   public readonly scoreboard: Scoreboard = new Scoreboard();
   public readonly dynamicProperties: DynamicPropertiesCollection = {};
   public readonly chunkManager: ChunkManager;
+  public readonly entities: Entity[] = [];
+  public readonly players: Player[] = [];
+  public options?: WorldLoadOptions = {
+    scoreboard: true,
+    dynamicProperty: true,
+    chunk: true,
+    entity: true,
+    player: true
+  }
 
-  constructor(worldPath: string) {
+  constructor(worldPath: string, options?: WorldLoadOptions | boolean) {
     this.db = new LevelDBWrapper(worldPath);
     this.chunkManager = new ChunkManager(this);
+    if (typeof options === 'boolean') {
+      if (!options) this.options = {};
+    } else {
+      Object.assign(this.options, options ?? {});
+    }
   }
 
   get isOpen(): boolean {
@@ -23,9 +46,7 @@ export class World {
 
   async open() {
     await this.db.levelDB.open();
-    this.scoreboard.load(await this.db.get('scoreboard'));
-    Object.assign(this.dynamicProperties, DynamicPropertyUtil.load(await this.db.get('DynamicProperties')));
-    await this.chunkManager.load();
+    await processWorldData(this);
   }
 
   async saveAndClose() {
@@ -33,6 +54,8 @@ export class World {
   }
 
   async getPlayers(): Promise<Player[]> {
+    if (this.options.player) return this.players;
+
     const keys = await this.db.getKeys();
     const playerKeys = keys.filter(k => k.startsWith('player') && k.includes('server'));
     playerKeys.push('~local_player');
@@ -43,6 +66,8 @@ export class World {
   }
 
   async getEntities(): Promise<Entity[]> {
+    if (this.options.entity) return this.entities;
+
     const keys = await this.db.getKeys();
     const entityKeys = keys.filter(k => k.startsWith('actorprefix'));
     return (await Promise.all(

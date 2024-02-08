@@ -59,7 +59,6 @@ export class WorldChunk {
 
   addKeyValue(keyValue: LevelKeyValue, info: ChunkKeyInfo) {
     const { hasDimensionParam, tag } = info;
-    if (this.x > 1000) console.log(keyValue.skey)
     switch (tag) {
       case WorldChunkTag.Version:
         this.chunkVersion = keyValue;
