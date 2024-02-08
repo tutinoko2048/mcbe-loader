@@ -1,11 +1,13 @@
 import { LevelDBWrapper } from './LevelDBWrapper';
 import { Scoreboard } from './Scoreboard';
-import { DynamicPropertiesCollection } from './DynamicProperty';
 import { ChunkManager } from './ChunkManager';
-import { WorldChunk } from './WorldChunk';
 import { Player } from '../entity/Player';
 import { Entity } from '../entity/Entity';
 import { processWorldData } from '../util';
+import type { DynamicPropertiesCollection } from './DynamicProperty';
+import type { WorldChunk } from './WorldChunk';
+import type { NBT } from 'prismarine-nbt';
+import { LevelDat } from './LevelDat';
 
 export interface WorldLoadOptions {
   scoreboard?: boolean;
@@ -17,6 +19,7 @@ export interface WorldLoadOptions {
 
 export class World {
   public readonly db: LevelDBWrapper;
+  public readonly levelDat: LevelDat;
   public readonly scoreboard: Scoreboard = new Scoreboard();
   public readonly dynamicProperties: DynamicPropertiesCollection = {};
   public readonly chunkManager: ChunkManager;
@@ -32,6 +35,7 @@ export class World {
 
   constructor(worldPath: string, options?: WorldLoadOptions | boolean) {
     this.db = new LevelDBWrapper(worldPath);
+    this.levelDat = new LevelDat(this);
     this.chunkManager = new ChunkManager(this);
     if (typeof options === 'boolean') {
       if (!options) this.options = {};
@@ -46,6 +50,7 @@ export class World {
 
   async open() {
     await this.db.levelDB.open();
+    await this.levelDat.load();
     await processWorldData(this);
   }
 

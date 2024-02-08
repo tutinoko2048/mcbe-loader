@@ -49,4 +49,8 @@ export class Entity {
     if (!health) return;
     return health.value as unknown as number;
   }
+
+  get [Symbol.toStringTag]() {
+    return this.typeId;
+  }
 }

@@ -52,9 +52,7 @@ export class WorldChunk {
 
   async getBlockEntities() {
     return Promise.all(
-      this.blockEntityKeys.map(async (keyValue) => {
-        return new BlockEntity(await keyValue.toNBT())
-      })
+      this.blockEntityKeys.map(async (keyValue) => new BlockEntity(await keyValue.toNBT()))
     );
   }
 

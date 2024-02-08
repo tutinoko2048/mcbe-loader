@@ -68,4 +68,8 @@ export class ItemStack {
       lockMode: this.lockMode, keepOnDeath: this.keepOnDeath, durability: this.durability, enchantments: this.enchantments
     }
   }
+
+  get [Symbol.toStringTag]() {
+    return this.typeId;
+  }
 };
