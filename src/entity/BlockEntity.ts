@@ -1,5 +1,5 @@
 import { NBT } from 'prismarine-nbt';
-import { Vector3 } from './types';
+import { Vector3 } from '../types';
 
 export class BlockEntity {
   public readonly _data: NBT;

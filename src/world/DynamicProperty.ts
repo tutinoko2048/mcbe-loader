@@ -1,5 +1,5 @@
 import { NBT, TagType, Tags } from 'prismarine-nbt';
-import { Vector3 } from './types';
+import { Vector3 } from '../types';
 
 export type DynamicPropertiesCollection = Record<string, DynamicProperties>
 export type DynamicProperties = Record<string, string | number | boolean | Vector3>

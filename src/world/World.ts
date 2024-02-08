@@ -1,11 +1,11 @@
-import { Scoreboard } from './Scoreboard'; 
 import { LevelDBWrapper } from './LevelDBWrapper';
-import { Player } from './Player';
-import { Entity } from './Entity';
-import { DynamicPropertiesCollection, DynamicPropertyUtil } from './DynamicProperty';
-import { WorldChunk } from './WorldChunk';
+import { Scoreboard } from './Scoreboard';
+import { DynamicPropertiesCollection } from './DynamicProperty';
 import { ChunkManager } from './ChunkManager';
-import { processWorldData } from '.';
+import { WorldChunk } from './WorldChunk';
+import { Player } from '../entity/Player';
+import { Entity } from '../entity/Entity';
+import { processWorldData } from '../util';
 
 export interface WorldLoadOptions {
   scoreboard?: boolean;

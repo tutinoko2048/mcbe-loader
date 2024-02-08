@@ -1,6 +1,6 @@
 import { TagType, Tags } from 'prismarine-nbt';
 import { InventorySlot } from './InventorySlot';
-import { ItemStack } from './ItemStack';
+import { ItemStack } from '../ItemStack';
 import { Player } from './Player';
 
 type Data = Tags[TagType.List];

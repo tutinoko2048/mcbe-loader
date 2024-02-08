@@ -1,5 +1,7 @@
-import { DynamicPropertyUtil, Entity, Player } from '.';
-import type { World } from './World';
+import { Entity } from './entity/Entity';
+import { Player } from './entity/Player';
+import { DynamicPropertyUtil } from './world/DynamicProperty';
+import type { World } from './world/World';
 
 export async function processWorldData(world: World) {
   for (const keyValue of await world.db.getEntries()) {

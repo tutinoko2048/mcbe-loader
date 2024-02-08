@@ -1,6 +1,6 @@
 import { Player } from './Player';
 import { InventorySlot } from './InventorySlot';
-import { ItemStack } from './ItemStack';
+import { ItemStack } from '../ItemStack';
 
 export enum EquipmentSlot {
   Head = 'Head',

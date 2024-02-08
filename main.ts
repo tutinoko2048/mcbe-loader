@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs';
 import { World, WorldChunkTag } from './src';
-import { BlockEntity } from './src/BlockEntity';
+import { BlockEntity } from './src/entity/BlockEntity';
 
 const world = new World('./worlds/seichi');
 

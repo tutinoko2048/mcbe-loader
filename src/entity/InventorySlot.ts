@@ -1,5 +1,5 @@
 import { TagType, Tags } from 'prismarine-nbt';
-import { ItemStack } from './ItemStack';
+import { ItemStack } from '../ItemStack';
 
 type Data = Record<string, Tags[TagType.Compound]>;
 

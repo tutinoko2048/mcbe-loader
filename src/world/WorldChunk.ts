@@ -1,5 +1,6 @@
 import { LevelKeyValue } from './LevelKeyValue';
-import { BlockEntity } from './BlockEntity';
+import { BlockEntity } from '../entity/BlockEntity';
+import { Dimension } from '../types';
 
 // Microsoft Creator Docs
 // https://learn.microsoft.com/en-us/minecraft/creator/documents/actorstorage
@@ -44,7 +45,7 @@ export class WorldChunk {
   public blockEntityKeys: LevelKeyValue[] = [];
 
   constructor(
-    public readonly dimension: number,
+    public readonly dimension: Dimension,
     public readonly x: number,
     public readonly z: number
   ) {}

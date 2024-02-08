@@ -1,6 +1,6 @@
 import { NBT, TagType } from 'prismarine-nbt';
-import { DynamicPropertiesCollection, DynamicPropertyUtil } from './DynamicProperty';
-import type { Vector3, Vector2 } from './types';
+import { DynamicPropertiesCollection, DynamicPropertyUtil } from '../world/DynamicProperty';
+import type { Vector3, Vector2 } from '../types';
 
 export class Entity {
   public readonly _data: NBT;
