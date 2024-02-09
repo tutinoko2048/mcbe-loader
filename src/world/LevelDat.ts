@@ -23,7 +23,24 @@ export class LevelDat {
   async save(): Promise<void> {
     const path = resolve(process.cwd(), this.world.db.worldPath, 'level.dat');
     const pathOld = resolve(process.cwd(), this.world.db.worldPath, 'level.dat_old');
-    await writeFile(path, writeUncompressed(this._data));
-    await writeFile(pathOld, writeUncompressed(this._data));
+    const baseData = writeUncompressed(this._data, 'little');
+    const fixedData = this.fixLevelDat(baseData);
+    await writeFile(path, fixedData);
+    await writeFile(pathOld, fixedData);
+  }
+
+  /** Add extra 8 bytes as header */
+  private fixLevelDat(dat: Buffer): Buffer {
+    // file type
+    const fileType = 10;
+    const fileTypeData = Buffer.alloc(4, 0);
+    fileTypeData.writeInt32LE(fileType);
+
+    // size of level.dat
+    const sizeData = Buffer.alloc(4, 0);
+    sizeData.writeInt32LE(dat.byteLength);
+
+    // merge it
+    return Buffer.concat([fileTypeData, sizeData, dat]);
   }
 }
