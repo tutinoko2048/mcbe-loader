@@ -47,7 +47,7 @@ export async function processWorldData(world: World) {
       keyValue.value &&
       [9, 10, 13, 14, 17, 18, 21, 22].includes(skey.length)
     ) {
-      world.chunkManager._processKeyValue(keyValue);
+      if (world.options.chunk) world.chunkManager._processKeyValue(keyValue);
     } else {
       console.warn('unknown key:', skey);
     }

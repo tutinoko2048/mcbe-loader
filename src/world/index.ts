@@ -5,3 +5,4 @@ export * from './LevelKeyValue';
 export * from './Scoreboard';
 export * from './World';
 export * from './WorldChunk';
+export * from './KeyBuilder';

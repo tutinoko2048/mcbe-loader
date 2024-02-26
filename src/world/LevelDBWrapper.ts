@@ -7,6 +7,8 @@ import { LevelKey, LevelKeyValue } from './LevelKeyValue';
 export class LevelDBWrapper {
   public readonly levelDB: LevelDB;
   public readonly worldPath: string;
+  public keyValues: LevelKeyValue[] = [];
+  private isChanged: boolean = true;
   
   constructor(worldPath: string) {
     if (!existsSync(resolve(process.cwd(), worldPath) + '/db')) throw Error('World not found');
@@ -38,10 +40,13 @@ export class LevelDBWrapper {
 
   async getEntries(): Promise<LevelKeyValue[]> {
     if (!this.levelDB.isOpen()) await this.levelDB.open();
-    const keys: LevelKeyValue[] = [];
+    if (!this.isChanged) return this.keyValues;
+    const keyValues: LevelKeyValue[] = [];
     const iterator = this.levelDB.getIterator({ keyAsBuffer: true });
-    for await (const [key, value] of iterator) keys.push(new LevelKeyValue(key, value));
-    return keys;
+    for await (const [key, value] of iterator) keyValues.push(new LevelKeyValue(key, value));
+    this.keyValues = keyValues;
+    this.isChanged = false;
+    return keyValues;
   }
 
   async put(key: string | Buffer, value: nbt.NBT): Promise<boolean> {
@@ -49,7 +54,9 @@ export class LevelDBWrapper {
     if (!this.levelDB.isOpen()) await this.levelDB.open();
 
     const rawData = nbt.writeUncompressed(value);
-    return await this.levelDB.put(key, rawData);
+    const res = await this.levelDB.put(key, rawData);
+    this.isChanged = true;
+    return res;
   }
   
   async has(key: string | Buffer): Promise<boolean> {

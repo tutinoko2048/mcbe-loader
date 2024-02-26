@@ -6,8 +6,9 @@ import { Entity } from '../entity/Entity';
 import { processWorldData } from '../util';
 import type { DynamicPropertiesCollection } from './DynamicProperty';
 import type { WorldChunk } from './WorldChunk';
-import type { NBT } from 'prismarine-nbt';
 import { LevelDat } from './LevelDat';
+import { Dimension } from '../types';
+import { KeyBuilder } from './KeyBuilder';
 
 export interface WorldLoadOptions {
   scoreboard?: boolean;
@@ -49,9 +50,12 @@ export class World {
   }
 
   async open() {
+    console.debug('[World] Opening World...')
     await this.db.levelDB.open();
     await this.levelDat.load();
+    console.debug('[World] Processing world data...')
     await processWorldData(this);
+    console.debug('[World] Load complete!');
   }
 
   async saveAndClose() {
@@ -83,7 +87,7 @@ export class World {
     )).filter(Boolean);
   }
 
-  async getChunks(): Promise<WorldChunk[]> {
+  getChunks(): WorldChunk[] {
     const chunks = [];
     for (const dimensionChunks of Object.values(this.chunkManager.chunks)) {
       for (const xChunks of Object.values(dimensionChunks)) {
@@ -93,5 +97,15 @@ export class World {
       }
     }
     return chunks;
+  }
+
+  async getChunk(cx: number, cz: number, dimension: Dimension = Dimension.Overworld): Promise<WorldChunk | undefined> {
+    const chunk = this.chunkManager.chunks[dimension]?.[cx]?.[cz];
+    if (chunk) return chunk;
+    const keyPrefix = KeyBuilder.baseChunkKey(cx, cz, dimension).getBuffer().toString('utf-8');
+    for (const keyValue of await this.db.getEntries()) {
+      if (keyValue.skey.startsWith(keyPrefix)) this.chunkManager._processKeyValue(keyValue);
+    }
+    return this.chunkManager.chunks[dimension]?.[cx]?.[cz];
   }
 }
