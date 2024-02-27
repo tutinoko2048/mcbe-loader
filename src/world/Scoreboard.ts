@@ -79,9 +79,10 @@ export class ScoreboardIdentity {
     }
   }
   
-  get id(): BigInt {
+  get id(): string {
     if (this._data.ScoreboardId.type !== TagType.Long) return;
-    return this._data.ScoreboardId.value as unknown as BigInt;
+    const value = this._data.ScoreboardId.value as unknown as BigInt;
+    return String(value);
   }
   
   get type(): ScoreboardIdentityType {
@@ -108,13 +109,14 @@ export class ScoreboardScoreInfo {
   
   get participant(): ScoreboardIdentity | undefined {
     return this._scoreboard.getParticipants().find(identity =>
-      String(identity.id) === String(this.id)
+      identity.id === this.id
     );
   }
 
-  get id(): BigInt {
+  get id(): string {
     if (this._data.ScoreboardId.type !== TagType.Long) return;
-    return this._data.ScoreboardId.value as unknown as BigInt;
+    const value = this._data.ScoreboardId.value as unknown as BigInt;
+    return String(value);
   }
   
   toJSON() {

@@ -26,8 +26,9 @@ export class Entity {
     return !!uniqueId?.value;
   }
 
-  get id(): BigInt {
-    return this._data.value.UniqueID.value as unknown as BigInt;
+  get id(): string {
+    const value = this._data.value.UniqueID.value as unknown as BigInt;
+    return String(value);
   }
 
   get typeId(): string {
@@ -44,7 +45,7 @@ export class Entity {
     const pos = this._data.value.Pos;
     if (pos.type !== TagType.List) return;
     const [x, y, z] = pos.value.value as number[];
-    return { x , y, z }
+    return { x, y, z }
   }
   
   get rotation(): Vector2 {
