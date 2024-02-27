@@ -2,13 +2,19 @@ import { NBT } from 'prismarine-nbt';
 import { Entity } from './Entity';
 import { Inventory } from './Inventory';
 import { EquipmentInventory } from './EquipmentInventory';
+import type { LevelKey } from '../world/LevelKeyValue';
+import type { World } from '../world/World';
 
 export class Player extends Entity {
   public readonly inventory: Inventory;
   public readonly equipmentInventory: EquipmentInventory;
 
-  constructor(data: NBT) {
-    super(data);
+  constructor(
+    public world: World,
+    public key: LevelKey,
+    data: NBT
+  ) {
+    super(world, key, data);
 
     this.inventory = new Inventory(this);
     this.equipmentInventory = new EquipmentInventory(this);

@@ -55,6 +55,10 @@ export class ScoreboardObjective {
   toJSON() {
     return { id: this.id, displayName: this.displayName }
   }
+
+  get [Symbol.toStringTag]() {
+    return this.id;
+  }
 }
 
 export class ScoreboardIdentity {
@@ -130,8 +134,8 @@ export class Scoreboard {
   }
   
   getObjectives(): ScoreboardObjective[] {
-    const _objectives = this._data.value.Objectives;
-    if (_objectives.type !== TagType.List || _objectives.value.type !== TagType.Compound) return [];
+    const _objectives = this._data?.value.Objectives;
+    if (_objectives?.type !== TagType.List || _objectives?.value.type !== TagType.Compound) return [];
     return _objectives.value.value.map((data: any) => new ScoreboardObjective(this, data));
   }
   

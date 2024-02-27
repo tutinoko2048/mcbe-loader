@@ -3,12 +3,13 @@ import { Scoreboard } from './Scoreboard';
 import { ChunkManager } from './ChunkManager';
 import { Player } from '../entity/Player';
 import { Entity } from '../entity/Entity';
-import { processWorldData } from '../util';
+import { processWorldData } from '../ProcessWorldData';
 import type { DynamicPropertiesCollection } from './DynamicProperty';
 import type { WorldChunk } from './WorldChunk';
 import { LevelDat } from './LevelDat';
 import { Dimension } from '../types';
 import { KeyBuilder } from './KeyBuilder';
+import { LevelKey } from '.';
 
 export interface WorldLoadOptions {
   scoreboard?: boolean;
@@ -65,24 +66,26 @@ export class World {
   async getPlayers(): Promise<Player[]> {
     if (this.options.player) return this.players;
 
-    const keys = await this.db.getKeys();
-    const playerKeys = keys.filter(k => k.startsWith('player') && k.includes('server'));
-    playerKeys.push('~local_player');
+    const keys = await this.db.getKeys(true);
+    const playerKeys = keys.filter(k => (
+      (k.skey.startsWith('player') && k.skey.includes('server')) ||
+      k.skey === '~local_player'
+    ));
     
     return await Promise.all(
-      playerKeys.map(async key => new Player(await this.db.get(key)))
+      playerKeys.map(async key => new Player(this, key, await this.db.get(key)))
     );
   }
 
   async getEntities(): Promise<Entity[]> {
     if (this.options.entity) return this.entities;
 
-    const keys = await this.db.getKeys();
-    const entityKeys = keys.filter(k => k.startsWith('actorprefix'));
+    const keys = await this.db.getKeys(true);
+    const entityKeys = keys.filter(k => k.skey.startsWith('actorprefix'));
     return (await Promise.all(
       entityKeys.map(async key => {
         const data = await this.db.get(key);
-        return data && new Entity(data);
+        return data && new Entity(this, key, data);
       })
     )).filter(Boolean);
   }

@@ -16,11 +16,11 @@ export class LevelDBWrapper {
     this.levelDB = new LevelDB(worldPath + '/db');
   }
 
-  async get(key: string | Buffer): Promise<nbt.NBT | undefined> {
+  async get(key: string | Buffer | LevelKey): Promise<nbt.NBT | undefined> {
     if (!key) throw Error('invalid key');
     if (!this.levelDB.isOpen()) await this.levelDB.open();
-
-    const rawData = await this.levelDB.get(key);
+    
+    const rawData = await this.levelDB.get(key instanceof LevelKey ? key.key : key);
     if (!rawData) return;
     const { parsed } = await nbt.parse(rawData);
     return parsed;

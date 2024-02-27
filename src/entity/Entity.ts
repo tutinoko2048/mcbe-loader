@@ -1,14 +1,24 @@
 import { NBT, TagType } from 'prismarine-nbt';
 import { DynamicPropertiesCollection, DynamicPropertyUtil } from '../world/DynamicProperty';
 import type { Vector3, Vector2 } from '../types';
+import type { LevelKey } from '../world/LevelKeyValue';
+import type { World } from '../world/World';
 
 export class Entity {
   public readonly _data: NBT;
   public readonly dynamicProperties: DynamicPropertiesCollection;
 
-  constructor(data: NBT) {
+  constructor(
+    public world: World,
+    public key: LevelKey,
+    data: NBT
+  ) {
     this._data = data;
     this.dynamicProperties = DynamicPropertyUtil.load(this._data.value.DynamicProperties as any);
+  }
+
+  async save() {
+    await this.world.db.put(this.key.skey, this._data);
   }
 
   isValid(): boolean {

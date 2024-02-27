@@ -8,22 +8,22 @@ export async function processWorldData(world: World) {
     const { skey } = keyValue;
 
     if (skey.startsWith('actorprefix')) {
-      if (!world.options.entity) return;
+      if (!world.options.entity) continue;
       const rawData = await keyValue.toNBT();
-      if (rawData) world.entities.push(new Entity(rawData));
+      if (rawData) world.entities.push(new Entity(world, keyValue, rawData));
 
     } else if (skey.startsWith('player_') || skey === '~local_player') {
-      if (!world.options.player) return;
+      if (!world.options.player) continue;
       if (skey.includes('server') || skey === '~local_player') {
-        world.players.push(new Player(await keyValue.toNBT()));
+        world.players.push(new Player(world, keyValue, await keyValue.toNBT()));
       }
 
     } else if (skey === 'scoreboard') {
-      if (!world.options.scoreboard) return;
+      if (!world.options.scoreboard) continue;
       world.scoreboard.load(await keyValue.toNBT());
 
     } else if (skey === 'DynamicProperties') {
-      if (!world.options.dynamicProperty) return;
+      if (!world.options.dynamicProperty) continue;
       Object.assign(world.dynamicProperties, DynamicPropertyUtil.load(await keyValue.toNBT()));
 
     } else if (skey.startsWith('structuretemplate_')) {
